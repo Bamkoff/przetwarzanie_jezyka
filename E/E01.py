@@ -19,9 +19,9 @@ def List_of_href_from_page(url, base):
                 if base[-1] == "/" and href.group(1)[0] == "/":
                     list.add(get_url(base + href.group(1)[1:]))
                 elif base[-1] != "/" and href.group(1)[0] != "/":
-                    list.add(get_url(base + href.group(1)))
+                    list.add(get_url(base + "/" +href.group(1)))
                 else:
-                    list.add(get_url(base + "/" + href.group(1)))
+                    list.add(get_url(base + href.group(1)))
     return list
 
 def get_pages_content(url):
@@ -44,6 +44,7 @@ def get_url(url):
 
 to_visit = set()
 visited = set()
+visited.add("http://rjawor.home.amu.edu.pl/index.php")
 links = set()
 
 content = ""
@@ -53,11 +54,12 @@ if len(sys.argv) > 1:
     to_visit.add(sys.argv[1])
     base_url = sys.argv[1]
 else:
-    to_visit.add("http://rjawor.home.amu.edu.pl/")
-    base_url = to_visit[0]
+    to_visit.add("http://rjawor.home.amu.edu.pl/index_en.php")
+    base_url = "http://rjawor.home.amu.edu.pl/"
 
 while len(to_visit) > 0:
     for url in to_visit:
+        print(url)
         content += get_pages_content(url)
         links.update(List_of_href_from_page(url, base_url))
         visited.add(url)
@@ -66,5 +68,6 @@ while len(to_visit) > 0:
     file.close()
     to_visit = set()
     for link in links:
-        if link not in visited:
-            to_visit.add(link)
+        if link not in visited and re.search("^" + base_url, link) is not None:
+            if re.search(r"\.php$", link) is not None:
+                to_visit.add(link)
