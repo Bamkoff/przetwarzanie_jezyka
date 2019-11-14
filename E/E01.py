@@ -28,14 +28,11 @@ def get_pages_content(url):
     content = ""
     page = requests.get(url)
     soup = BeautifulSoup(page.content, 'html.parser')
-    flag = False
     for string in soup.strings:
-        if re.search(r"^\n+$", string) is None:
+        if re.search(r"^\n+$", string) is None and re.search(r"^\t+$", string) is None:
             content += repr(string)[1:-1]
-            flag = True
-        elif flag:
-            content += repr(string)[1:-1]
-            flag = False
+    
+     
 
     return content
 
@@ -44,7 +41,7 @@ def get_url(url):
 
 to_visit = set()
 visited = set()
-visited.add("http://rjawor.home.amu.edu.pl/index.php")
+visited.add("http://rjawor.home.amu.edu.pl/index_en.php")
 links = set()
 
 content = ""
@@ -54,7 +51,7 @@ if len(sys.argv) > 1:
     to_visit.add(sys.argv[1])
     base_url = sys.argv[1]
 else:
-    to_visit.add("http://rjawor.home.amu.edu.pl/index_en.php")
+    to_visit.add("http://rjawor.home.amu.edu.pl/")
     base_url = "http://rjawor.home.amu.edu.pl/"
 
 while len(to_visit) > 0:
